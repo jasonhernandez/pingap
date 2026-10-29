@@ -442,7 +442,9 @@ walkdir = "2.5.0"
 # verify-aws: the signature of an OCSP answer, with the aws-lc-rs that is
 # in the tree for both TLS backends
 x509-parser = { version = "0.18.1", features = ["verify-aws"] }
-zstd = "0.14.0"
+# At least 0.14.3, which brings zstd-safe 8.2.0: the fixes of RUSTSEC-2026-0391
+# and of the zstd-safe advisories of 2026-10-16.
+zstd = "0.14.3"
 
 # Shared by benches / tests across pingap-* crates.
 bytemuck = "1.25.2"
