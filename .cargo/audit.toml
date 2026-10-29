@@ -29,4 +29,34 @@ ignore = [
     # rustls-pki-types. Cannot drop without forking pingora. Remove when
     # pingora-rustls stops depending on rustls-pemfile.
     "RUSTSEC-2025-0134",
+
+    # zstd 0.13.3 / zstd-safe 7.3.0 (the zstd-rs advisories of 2026-10-16).
+    # The fixes are only in zstd 0.14.3 / zstd-safe 8.2.0, which the rest of
+    # the tree is on; pingora-header-serde 0.9.0 (pingora-cache's compression
+    # of cached headers) still requires zstd ^0.13 and zstd-safe ^7, and no 7.x
+    # has them. None of the flawed paths is reached from pingap:
+    # - zstd-safe's `experimental`, `seekable` and `zstdmt` features are off, so
+    #   0395, 0396, 0398, 0399, 0402, 0404, 0405 and 0406 are not compiled in;
+    # - header-serde makes one-shot `compress`/`decompress` calls on
+    #   thread-local contexts that never stream, and never touches `OutBuffer`
+    #   (0397, 0400, 0403);
+    # - it trains a dictionary only in `dict::train`, which nothing calls at
+    #   run time (0401), and never uses zstd's `with_context` (0391).
+    # An ID here hides it on every version: zstd 0.14.3 in
+    # [workspace.dependencies] keeps the 0.14 / 8.x copy on the fixed release.
+    # Remove when a pingora release moves header-serde to zstd 0.14
+    # (https://github.com/cloudflare/pingora/issues/1072).
+    "RUSTSEC-2026-0391",
+    "RUSTSEC-2026-0395",
+    "RUSTSEC-2026-0396",
+    "RUSTSEC-2026-0397",
+    "RUSTSEC-2026-0398",
+    "RUSTSEC-2026-0399",
+    "RUSTSEC-2026-0400",
+    "RUSTSEC-2026-0401",
+    "RUSTSEC-2026-0402",
+    "RUSTSEC-2026-0403",
+    "RUSTSEC-2026-0404",
+    "RUSTSEC-2026-0405",
+    "RUSTSEC-2026-0406",
 ]
